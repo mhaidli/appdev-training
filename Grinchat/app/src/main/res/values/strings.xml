@@ -18,4 +18,12 @@
     <string name="email_field">Email</string>
     <string name="sign_up_label_II">Sign Up!</string>
 
+    <string name="error_message_missing_field_signup">Please make sure you enter a username, a password, and an email address</string>
+    <string name="error_message_missing_field_title">Error!</string>
+    <string name="error_message_missing_field_login">Please make sure you enter a username and a password</string>
+    <string name="error_message_mismatching_passwords">Passwords must match!</string>
+
+    <string name="logout">Log out</string>
+
+
 </resources>
