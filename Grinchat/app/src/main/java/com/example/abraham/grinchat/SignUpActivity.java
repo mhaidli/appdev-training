@@ -18,17 +18,17 @@ import com.parse.SignUpCallback;
 
 public class SignUpActivity extends ActionBarActivity {
 
-
     protected EditText mUserName;
     protected EditText mPassword;
     protected EditText mPasswordConfirmation;
     protected EditText mEmail;
     protected Button mSignUpButton;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
         mUserName = (EditText)findViewById(R.id.usernameText);

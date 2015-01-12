@@ -33,6 +33,18 @@ public class LoginActivity extends Activity {
         mUserName = (EditText) findViewById(R.id.usernameText);
         mPassword = (EditText) findViewById(R.id.passwordText);
         mLoginButton = (Button) findViewById(R.id.loginButton);
+        mSignUpTextView = (TextView) findViewById(R.id.signUpTextView);
+
+
+        mSignUpTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
 
         mLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,6 +87,7 @@ public class LoginActivity extends Activity {
                 }
             }
         });
+
     }
 
     @Override

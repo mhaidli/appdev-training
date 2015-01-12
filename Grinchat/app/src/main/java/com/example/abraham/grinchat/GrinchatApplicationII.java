@@ -1,15 +1,12 @@
 package com.example.abraham.grinchat;
 
 import android.app.Application;
-
 import com.parse.Parse;
 
 /**
- * Created by Abraham on 1/10/2015.
+ * Created by Abraham on 1/12/2015.
  */
-
-
-public class GrinchatApplication extends Application {
+public class GrinchatApplicationII extends Application  {
 
     @Override
     public void onCreate() {
