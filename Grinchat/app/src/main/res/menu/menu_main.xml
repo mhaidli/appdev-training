@@ -2,7 +2,12 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
     <item android:id="@+id/action_logout"
-          android:title="@string/logout"
+          android:title="@string/logout_label"
+          android:orderInCategory="100"
+          android:showAsAction="never"/>
+
+    <item android:id="@+id/action_edit_friends"
+          android:title="@string/edit_fiends_label"
           android:orderInCategory="100"
           android:showAsAction="never"/>
 </menu>
