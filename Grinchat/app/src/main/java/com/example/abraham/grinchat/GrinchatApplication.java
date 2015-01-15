@@ -18,11 +18,5 @@ public class GrinchatApplication extends Application {
         Parse.enableLocalDatastore(this);
         Parse.initialize(this, "xwlFf55OTK5ztXzU5gTZWw92dXQwxwEqJ2QpJerg", "A0Ix4MilSXu60ytfP2YNYe8l5dIgTLFYgCvXektk");
 
-        /*
-        Testing connection to parse
-        ParseObject testObject = new ParseObject("TestObject");
-        testObject.put("foo", "bar");
-        testObject.saveInBackground();
-         */
     }
 }

@@ -1,22 +1,31 @@
 package com.example.abraham.grinchat;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
 
-//import android.app.Fragment;
-//import android.support.v13.app.FragmentPagerAdapter;
-
-//import android.support.v4.view.PagerAdapter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -29,12 +38,125 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      * may be best to switch to a
      * {@link android.support.v13.app.FragmentStatePagerAdapter}.
      */
+
     SectionsPagerAdapter mSectionsPagerAdapter;
+
+    public static final String TAG = MainActivity.class.getSimpleName();
+
+    public static final int TAKE_PHOTO_REQUEST = 0;
+    public static final int TAKE_VIDEO_REQUEST = 1;
+    public static final int GET_PHOTO_REQUEST = 2;
+    public static final int GET_VIDEO_REQUEST = 3;
+
+    public static final int MEDIA_TYPE_IMAGE = 4;
+    public static final int MEDIA_TYPE_VIDEO = 5;
+
+    public static final int FILE_SIZE_LIMIT= 1024*1024*10;
+
+    protected Uri mMediaUri;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
+
+
+    protected DialogInterface.OnClickListener mCameraDialogListener = new DialogInterface.OnClickListener(){
+        @Override
+        public void onClick(DialogInterface dialog, int which){
+            switch(which){
+                case 0: //Take Picture
+                    Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                    mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                    if (mMediaUri == null){
+                        Toast.makeText(MainActivity.this, R.string.error_message_missing_external_storage, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    else {
+                        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+                        startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST);
+                    }
+                case 1: //Take Video
+                    Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                    mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
+
+                    if (mMediaUri == null){
+                        Toast.makeText(MainActivity.this, R.string.error_message_missing_external_storage, Toast.LENGTH_LONG)
+                                .show();
+                    }
+                    else {
+                        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+                        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
+                        takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+                        startActivityForResult(takeVideoIntent, TAKE_VIDEO_REQUEST);
+                    }
+
+                case 2: //Get Picture
+                    Intent getPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    getPhotoIntent.setType("image/*");
+                    startActivityForResult(getPhotoIntent, GET_PHOTO_REQUEST);
+
+                case 3: //Get Video
+                    Intent getVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    getVideoIntent.setType("video/*");
+                    Toast.makeText(MainActivity.this, R.string.warning_video_size_limit, Toast.LENGTH_LONG).show();
+                    startActivityForResult(getVideoIntent, GET_VIDEO_REQUEST);
+            }
+        }
+    };
+
+    private Uri getOutputMediaFileUri(int mediaType) {
+
+        //Check to see if external storage exists
+        if(isExternalStorageAvailable()){
+            //Get App Name
+            String appName = MainActivity.this.getString(R.string.app_name);
+            //1. Get directory of external storage.
+            File mediaStorageDirectory = new File(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                    appName);
+
+            //2. Create directory
+            if(! mediaStorageDirectory.exists()){
+                if(! mediaStorageDirectory.mkdirs()){
+                    Log.e(TAG, "Problem with external media storage");
+                }
+            }
+
+            //Create file name and media file
+            File mediaFile;
+            Date now = new Date();
+            String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(now);
+
+            String path = mediaStorageDirectory.getPath() + File.separator;
+            if (mediaType == MEDIA_TYPE_IMAGE){
+                mediaFile = new File(path + "IMG_" + timestamp + ".jpg");
+            }
+            else if (mediaType == MEDIA_TYPE_VIDEO){
+                mediaFile = new File(path + "VID_" + timestamp + ".mp4");
+            }
+            else{
+                return null;
+            }
+            return Uri.fromFile(mediaFile);
+        }
+        else{
+            return null;
+        }
+    }
+
+    private boolean isExternalStorageAvailable(){
+        String state = Environment.getExternalStorageState();
+
+        //If there is external media storage, return true.
+        if(state.equals(Environment.MEDIA_MOUNTED)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +169,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         if (currentUser == null) {
             navigateToLogin();
         }
-
-        /*else{
-            ;
-        }*/
-
 
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
@@ -89,6 +206,62 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == RESULT_OK){
+
+            if( requestCode == GET_PHOTO_REQUEST || requestCode == GET_VIDEO_REQUEST){
+                if(data == null){
+                    Toast.makeText(this, R.string.title_generic_error_message, Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    mMediaUri = data.getData();
+                }
+                if(requestCode == GET_VIDEO_REQUEST){
+                    //Make sure file is less than 10MB
+                    int fileSize = 0;
+                    InputStream inputStream = null;
+
+                    try{
+                        inputStream = getContentResolver().openInputStream(mMediaUri);
+                        fileSize = inputStream.available();
+                    }
+                    catch(FileNotFoundException e){
+                        Toast.makeText(this, R.string.title_generic_error_message, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    catch(IOException e){
+                        Toast.makeText(this, R.string.title_generic_error_message, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    finally{
+                        try {
+                            inputStream.close();
+                        }    catch(IOException e){/*Intentionally left blank*/}
+                    }
+
+                    if(fileSize >= FILE_SIZE_LIMIT){
+                        Toast.makeText(this, R.string.error_video_size_too_large, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+            }
+
+            else {
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(mMediaUri);
+            sendBroadcast(mediaScanIntent);
+            }
+        }
+
+        else if (resultCode != RESULT_CANCELED){
+            Toast.makeText(this, R.string.title_generic_error_message, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void navigateToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -113,14 +286,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-            ParseUser.logOut();
-            navigateToLogin();
+        switch(id) {
+            case R.id.action_logout:
+                ParseUser.logOut();
+                navigateToLogin();
+            case R.id.action_edit_friends:
+                Intent intent = new Intent(this, EditFriendsActivity.class);
+                startActivity(intent);
+            case R.id.action_camera:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setItems(R.array.camera_choices, mCameraDialogListener);
+                AlertDialog dialog = builder.create();
+                dialog.show();
         }
-        else if (id == R.id.action_edit_friends) {
-            Intent intent = new Intent(this, EditFriendsActivity.class);
-            startActivity(intent);
-       }
 
         return super.onOptionsItemSelected(item);
     }
@@ -139,40 +317,5 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
-
-
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-//    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-/*        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-/*        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
-    }*/
 
 }
