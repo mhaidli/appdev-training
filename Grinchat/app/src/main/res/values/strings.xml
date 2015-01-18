@@ -23,14 +23,14 @@
     <string name="logout_label">Log out</string>
     <string name="edit_fiends_label">Manage Friends!</string>
     <string name="camera_label">Camera</string>
-
     <string name="empty_inbox_label">No new messages!</string>
-    <string name="empty_friends_label">No friends :(</string>
+    <string name="empty_friends_label">No friends :( Why not add some?</string>
+    <string name="success_generic_message">Success!</string>
     <string name="title_activity_edit_friends">Add Friends!</string>
+    <string name="error_generic_error_header">Error!</string>
     <string name="title_generic_error_message">Uh-oh! Seems like there was an error somewhere in our app/servers/something or other. Please try again!</string>
     <string name="warning_video_size_limit">Video must be less than 10MB</string>
     <string name="error_video_size_too_large">File size is larger than 10MB. Please select another file!</string>
-
 
     <string-array name="camera_choices">
         <item>Take Picture</item>
@@ -38,7 +38,9 @@
         <item>Choose Picture from Gallery</item>
         <item>Choose Video from Gallery</item>
     </string-array>
-    
-    
-    
+
+    <string name="title_activity_recipients">Choose Recipients!</string>
+    <string name="menu_send_label">Send</string>
+    <string name="title_activity_view_image">Grinchat</string>
+
 </resources>
