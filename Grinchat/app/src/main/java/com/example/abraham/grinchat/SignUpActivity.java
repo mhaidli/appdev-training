@@ -57,7 +57,8 @@ public class SignUpActivity extends Activity {
                     builder.setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                } else if (password.equals(passwordConfirmation)) {
+                }
+                else if (password.equals(passwordConfirmation)) {
 
                     setProgressBarIndeterminateVisibility(true);
                     ParseUser newUser = new ParseUser();

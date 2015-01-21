@@ -1,5 +1,6 @@
 package com.example.abraham.grinchat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -83,16 +84,26 @@ public class InboxFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
+        //Toast.makeText(getActivity(), "Debugging 1", Toast.LENGTH_LONG).show();
+/*        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Debugging");
+        builder.setTitle("Debugging");
+        builder.setPositiveButton(android.R.string.ok, null);
+        AlertDialog dialog = builder.create();
+        dialog.show();*/
+
+
         ParseObject message = mListOfMessages.get(position);
         String messageType = message.getString(ParseConstants.KEY_FILE_TYPE);
         ParseFile file = message.getParseFile(ParseConstants.KEY_FILE);
         Uri fileUri = Uri.parse(file.getUrl());
-
+        Context thisContext = getActivity();
+        //Toast.makeText(getActivity(), "Debugging 2", Toast.LENGTH_LONG).show();
         //View image
         if(messageType.equals(ParseConstants.TYPE_IMAGE)){
-            Intent intent  = new Intent(getActivity(), ViewImageActivity.class);
-            intent.setData(fileUri);
-            startActivity(intent);
+            Intent intent1 = new Intent(thisContext, ViewImageActivity.class);
+            intent1.setData(fileUri);
+            startActivity(intent1);
         }
 
         //else if(messageType.equals(ParseConstants.TYPE_VIDEO)
@@ -100,6 +111,12 @@ public class InboxFragment extends ListFragment {
             Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
             intent.setDataAndType(fileUri, "video/*");
             startActivity(intent);
+            /*AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+            builder1.setMessage("Debugging Video");
+            builder1.setTitle("Debugging Video");
+            builder1.setPositiveButton(android.R.string.ok, null);
+            AlertDialog dialog1 = builder1.create();
+            dialog1.show();*/
         }
     }
 }

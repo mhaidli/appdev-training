@@ -69,7 +69,8 @@ public class LoginActivity extends Activity {
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
-                            } else {
+                            }
+                            else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                                 builder.setMessage(e.getMessage());
                                 builder.setTitle(R.string.error_message_missing_field_title);

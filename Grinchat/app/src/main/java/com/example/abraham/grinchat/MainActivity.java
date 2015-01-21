@@ -64,50 +64,55 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     ViewPager mViewPager;
 
 
-    protected DialogInterface.OnClickListener mCameraDialogListener = new DialogInterface.OnClickListener(){
+    protected DialogInterface.OnClickListener mCameraDialogListener = new DialogInterface.OnClickListener() {
         @Override
-        public void onClick(DialogInterface dialog, int which){
-            switch(which){
-                case 0: //Take Picture
-                    Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        public void onClick(DialogInterface dialog, int which) {
+            /*switch(which){
+                case 0: //Take Picture*/
+            if (which == 0) {
+                Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-                    if (mMediaUri == null){
-                        Toast.makeText(MainActivity.this, R.string.error_message_missing_external_storage, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                    else {
-                        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
-                        startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST);
-                    }
-                case 1: //Take Video
-                    Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                    mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
+                mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+                if (mMediaUri == null) {
+                    Toast.makeText(MainActivity.this, R.string.error_message_missing_external_storage, Toast.LENGTH_LONG)
+                            .show();
+                } else {
+                    takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+                    startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST);
+                }
+            }
+            //   case 1: //Take Video
+            else if (which == 1) {
+                Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
 
-                    if (mMediaUri == null){
-                        Toast.makeText(MainActivity.this, R.string.error_message_missing_external_storage, Toast.LENGTH_LONG)
-                                .show();
-                    }
-                    else {
-                        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
-                        takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
-                        takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
-                        startActivityForResult(takeVideoIntent, TAKE_VIDEO_REQUEST);
-                    }
-
-                case 2: //Get Picture
-                    Intent getPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    getPhotoIntent.setType("image/*");
-                    startActivityForResult(getPhotoIntent, GET_PHOTO_REQUEST);
-
-                case 3: //Get Video
-                    Intent getVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    getVideoIntent.setType("video/*");
-                    Toast.makeText(MainActivity.this, R.string.warning_video_size_limit, Toast.LENGTH_LONG).show();
-                    startActivityForResult(getVideoIntent, GET_VIDEO_REQUEST);
+                if (mMediaUri == null) {
+                    Toast.makeText(MainActivity.this, R.string.error_message_missing_external_storage, Toast.LENGTH_LONG)
+                            .show();
+                } else {
+                    takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+                    takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
+                    takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0);
+                    startActivityForResult(takeVideoIntent, TAKE_VIDEO_REQUEST);
+                }
+            }
+            //    case 2: //Get Picture
+            else if (which == 2) {
+                Intent getPhotoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                getPhotoIntent.setType("image/*");
+                startActivityForResult(getPhotoIntent, GET_PHOTO_REQUEST);
+            }
+            //    case 3: //Get Video
+            else if (which == 3) {
+                Intent getVideoIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                getVideoIntent.setType("video/*");
+                Toast.makeText(MainActivity.this, R.string.warning_video_size_limit, Toast.LENGTH_LONG).show();
+                startActivityForResult(getVideoIntent, GET_VIDEO_REQUEST);
             }
         }
     };
+        //}
+    //};
 
     private Uri getOutputMediaFileUri(int mediaType) {
 
@@ -282,6 +287,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     }
 
     private void navigateToLogin() {
+        ParseUser.logOut();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -305,20 +311,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        switch(id) {
-            case R.id.action_logout:
-                ParseUser.logOut();
-                navigateToLogin();
-            case R.id.action_edit_friends:
-                Intent intent = new Intent(this, EditFriendsActivity.class);
-                startActivity(intent);
-            case R.id.action_camera:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setItems(R.array.camera_choices, mCameraDialogListener);
-                AlertDialog dialog = builder.create();
-                dialog.show();
+       // switch(id) {
+        //    case R.id.action_logout:
+        if(id == R.id.action_logout){
+            navigateToLogin();
         }
-
+        else if(id == R.id.action_edit_friends){    //case R.id.action_edit_friends:
+                Intent intent = new Intent(this, EditFriendsActivity.class);
+                startActivity(intent);}
+       else {//if(id == R.id.action_edit_friends) { //case R.id.action_camera:
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setItems(R.array.camera_choices, mCameraDialogListener);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
         return super.onOptionsItemSelected(item);
     }
 

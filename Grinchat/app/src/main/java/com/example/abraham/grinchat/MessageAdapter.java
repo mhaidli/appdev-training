@@ -42,8 +42,17 @@ public class MessageAdapter extends ArrayAdapter<ParseObject> {
         }
 
         ParseObject message = mMessages.get(position);
-        String imageType = message.getString(ParseConstants.KEY_SENDER_NAME);
-        holder.iconImageView.setImageResource(returnIcon(imageType));
+        String imageType = message.getString(ParseConstants.KEY_FILE_TYPE);
+        //String imageType;
+        if(imageType.equals(ParseConstants.TYPE_VIDEO)){
+            holder.iconImageView.setImageResource(R.drawable.ic_action_play);
+        }
+        else if(imageType.equals(ParseConstants.TYPE_IMAGE)){
+            //error!
+            holder.iconImageView.setImageResource(R.drawable.ic_action_picture);
+        }
+
+        //holder.iconImageView.setImageResource(returnIcon(imageType));
         holder.nameLabel.setText(message.getString(ParseConstants.KEY_SENDER_NAME));
 
         return convertView;
@@ -61,12 +70,12 @@ public class MessageAdapter extends ArrayAdapter<ParseObject> {
         if(imageType.equals(ParseConstants.TYPE_IMAGE)){
             return R.drawable.ic_action_picture;
         }
-        else if (imageType.equals(ParseConstants.TYPE_VIDEO)){
+        /*else if (imageType.equals(ParseConstants.TYPE_VIDEO)){
             return R.drawable.ic_action_play;
-        }
+        }*/
         else {
             //error!
-            return R.drawable.ic_action_picture;
+            return R.drawable.ic_action_play;
         }
         /*switch(imageType){
             case ParseConstants.TYPE_IMAGE:

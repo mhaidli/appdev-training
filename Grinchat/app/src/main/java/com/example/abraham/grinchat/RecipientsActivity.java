@@ -129,11 +129,11 @@ public class RecipientsActivity extends ListActivity{
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
-        if(l.getCheckedItemCount() > 0) {
-            mSendMenuItem.setVisible(true);
+        if(l.getCheckedItemCount() == 0) {
+            mSendMenuItem.setVisible(false);
         }
         else{
-            mSendMenuItem.setVisible(false);
+            mSendMenuItem.setVisible(true);
         }
     }
 
@@ -149,7 +149,8 @@ public class RecipientsActivity extends ListActivity{
         byte[] fileBytes = FileHelper.getByteArrayFromFile(this, mMediaUri);
 
         if (fileBytes == null) {
-            return null;
+            Toast.makeText(RecipientsActivity.this, "Debugging", Toast.LENGTH_SHORT);
+            return message;
         }
 
         else {

@@ -1,20 +1,22 @@
 package com.example.abraham.grinchat;
 
+import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
 
-public class ViewImageActivity extends ActionBarActivity {
+public class ViewImageActivity extends Activity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_image);
 
+    /*  int i = 1;
+        int j = 1 + i;*/
         ImageView imageView = (ImageView) findViewById(R.id.imageView);
         Uri imageUri = getIntent().getData();
 
@@ -22,6 +24,22 @@ public class ViewImageActivity extends ActionBarActivity {
     }
 
 }
+
+//XML Stuff
+/*
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:scaleType="fitCenter"/>
+ */
+
+
+
+
 /*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
