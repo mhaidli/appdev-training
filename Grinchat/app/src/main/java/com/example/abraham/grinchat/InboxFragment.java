@@ -18,6 +18,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,10 +68,16 @@ public class InboxFragment extends ListFragment {
                             getListView().getContext(),
                             android.R.layout.simple_list_item_1,
                             parseUsernames);*/
-                    MessageAdapter adapter = new MessageAdapter(
-                        getListView().getContext(),
-                        mListOfMessages);
-                    setListAdapter(adapter);
+
+                    if(getListView().getAdapter() == null) {
+                        MessageAdapter adapter = new MessageAdapter(
+                                getListView().getContext(),
+                                mListOfMessages);
+                        setListAdapter(adapter);
+                    }
+                    else{
+                        ((MessageAdapter)getListView().getAdapter()).refill(mListOfMessages);
+                    }
                 }
                 else {
                     Log.e(TAG, e.getMessage());
@@ -92,7 +99,6 @@ public class InboxFragment extends ListFragment {
         AlertDialog dialog = builder.create();
         dialog.show();*/
 
-
         ParseObject message = mListOfMessages.get(position);
         String messageType = message.getString(ParseConstants.KEY_FILE_TYPE);
         ParseFile file = message.getParseFile(ParseConstants.KEY_FILE);
@@ -105,7 +111,6 @@ public class InboxFragment extends ListFragment {
             intent1.setData(fileUri);
             startActivity(intent1);
         }
-
         //else if(messageType.equals(ParseConstants.TYPE_VIDEO)
         else{ // Start Video
             Intent intent = new Intent(Intent.ACTION_VIEW, fileUri);
@@ -117,6 +122,21 @@ public class InboxFragment extends ListFragment {
             builder1.setPositiveButton(android.R.string.ok, null);
             AlertDialog dialog1 = builder1.create();
             dialog1.show();*/
+        }
+
+        List<String> ids = message.getList(ParseConstants.KEY_RECIPIENT_IDS);
+
+        if(ids.size() == 1){
+            message.deleteInBackground();
+        }
+        else{
+            ids.remove(ParseUser.getCurrentUser().getObjectId());
+
+            ArrayList<String> idsToRemove = new ArrayList<String>();
+            idsToRemove.add(ParseUser.getCurrentUser().getObjectId());
+
+            message.removeAll(ParseConstants.KEY_RECIPIENT_IDS, idsToRemove);
+            message.saveInBackground();
         }
     }
 }

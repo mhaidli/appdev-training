@@ -36,6 +36,7 @@ public class MessageAdapter extends ArrayAdapter<ParseObject> {
             holder = new ViewHolder();
             holder.iconImageView = (ImageView) convertView.findViewById(R.id.messageIcon);
             holder.nameLabel = (TextView) convertView.findViewById(R.id.senderLabel);
+            convertView.setTag(holder);
         }
         else{
             holder = (ViewHolder)convertView.getTag();
@@ -83,6 +84,13 @@ public class MessageAdapter extends ArrayAdapter<ParseObject> {
             case ParseConstants.TYPE_VIDEO:
                 return R.drawable.ic_action_play;
         }*/
+    }
+
+
+    public void refill(List<ParseObject> messages){
+        mMessages.clear();
+        mMessages.addAll(messages);
+        notifyDataSetChanged();
     }
 }
 
