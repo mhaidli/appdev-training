@@ -71,19 +71,9 @@ public class MessageAdapter extends ArrayAdapter<ParseObject> {
         if(imageType.equals(ParseConstants.TYPE_IMAGE)){
             return R.drawable.ic_action_picture;
         }
-        /*else if (imageType.equals(ParseConstants.TYPE_VIDEO)){
-            return R.drawable.ic_action_play;
-        }*/
         else {
-            //error!
             return R.drawable.ic_action_play;
         }
-        /*switch(imageType){
-            case ParseConstants.TYPE_IMAGE:
-                return R.drawable.ic_action_picture;
-            case ParseConstants.TYPE_VIDEO:
-                return R.drawable.ic_action_play;
-        }*/
     }
 
 
